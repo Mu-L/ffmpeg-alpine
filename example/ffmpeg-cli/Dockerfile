@@ -1,3 +1,3 @@
-FROM denismakogon/ffmpeg-alpine:4.0-runtime
+FROM yveshield/ffmpeg-alpine:4.2-runtime
 
 ENTRYPOINT ["/usr/local/bin/ffmpeg"]
