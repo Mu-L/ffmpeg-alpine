@@ -1,5 +1,5 @@
-FROM        denismakogon/ffmpeg-alpine:4.0-dependencies AS build-stage
-FROM        alpine:3.7
+FROM        yveshield/ffmpeg-alpine:4.2-dependencies AS build-stage
+FROM        alpine:3.10
 WORKDIR     /tmp/workdir
 
 ARG        PKG_CONFIG_PATH=/usr/local/ffmpeg/pkgconfig
@@ -7,7 +7,7 @@ ARG        LD_LIBRARY_PATH=/usr/local/ffmpeg
 ARG        PREFIX=/usr/local
 ARG        MAKEFLAGS="-j2"
 
-ENV        FFMPEG_VERSION=4.0
+ENV        FFMPEG_VERSION=4.2
 
 RUN     buildDeps="autoconf \
                    automake \
@@ -30,7 +30,7 @@ RUN     buildDeps="autoconf \
                    tar \
                    yasm \
                    zlib-dev" && \
-        apk  add --no-cache ${buildDeps} libgcc libstdc++ ca-certificates libcrypto1.0 libssl1.0
+        apk  add --no-cache ${buildDeps} libgcc libstdc++ ca-certificates libcrypto1.1 libssl1.1
 
 COPY --from=build-stage ${PREFIX}/bin ${PREFIX}/bin
 COPY --from=build-stage ${PREFIX}/lib ${PREFIX}/lib
@@ -68,7 +68,7 @@ RUN  \
         --enable-openssl \
         --enable-libfdk_aac \
         --enable-libkvazaar \
-        --enable-libaom --extra-libs=-lpthread \
+        #--enable-libaom --extra-libs=-lpthread \
         --enable-postproc \
         --enable-small \
         --enable-version3 \
