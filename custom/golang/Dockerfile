@@ -2,7 +2,7 @@ FROM golang:1.13-alpine3.10
 
 LABEL maintainer="Denis Makogon. mail: lildee1991@gmail.com"
 
-ENV FFMPEG_VERSION=4.1.1
+ENV FFMPEG_VERSION=4.2
 
 ENV FFMPEG_CORE="bash \
                  tzdata \
