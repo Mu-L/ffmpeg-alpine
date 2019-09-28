@@ -57,7 +57,8 @@ ENV BUILD_DEPS="fdk-aac-dev \
                 clang-dev"
 
 # FFMPEG
-RUN apk update && \
+RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.10/main/" > /etc/apk/repositories & \
+    apk update && \
     apk add --no-cache apk-tools && \
     echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
     apk update && \

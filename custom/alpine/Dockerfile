@@ -19,8 +19,8 @@ ENV FFMPEG_CORE="bash \
                  lame \
                  fdk-aac \
                  freetype \
-                 libcrypto1.0 \
-                 libssl1.0 \
+                 libcrypto1.1 \
+                 libssl1.1 \
                  jasper-libs \
                  libavc1394 \
                  yasm"
@@ -58,7 +58,8 @@ ENV BUILD_DEPS="fdk-aac-dev \
                 clang-dev"
 
 # FFMPEG
-RUN apk update && \
+RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.10/main/" > /etc/apk/repositories & \
+    apk update && \
     apk add --no-cache apk-tools && \
     echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
     apk update && \
