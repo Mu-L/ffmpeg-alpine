@@ -26,7 +26,7 @@ Image size: 24MB
 ## Example application
 
 [ffmpeg tool image](example/ffmpeg-cli) is basically a containerized version of ffmpeg CLI tool. More to come.
-Image size: 69.5MB at minimum
+Image size: 24MB at minimum
 
 ## Custom runtime
 
