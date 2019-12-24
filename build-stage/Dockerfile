@@ -48,7 +48,6 @@ RUN  \
         --disable-doc \
         --disable-ffplay \
         --enable-shared \
-        --enable-avresample \
         --enable-libopencore-amrnb \
         --enable-libopencore-amrwb \
         --enable-gpl \
@@ -78,6 +77,8 @@ RUN  \
         --prefix="${PREFIX}" && \
         make && \
         make install && \
+        make tools/qt-faststart && \
+        mv tools/qt-faststart ${PREFIX}/bin/ && \
         make distclean
 
 RUN \

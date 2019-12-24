@@ -1,6 +1,6 @@
 FROM golang:1.13-alpine3.10
 
-LABEL maintainer="Denis Makogon. mail: lildee1991@gmail.com"
+LABEL maintainer="Yves. mail: yveshield@gmail.com"
 
 ENV FFMPEG_VERSION=4.2
 
@@ -99,6 +99,8 @@ RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.10/main/" > /etc/apk/rep
         --enable-pic && \
     make && \
     make install && \
+    make tools/qt-faststart && \
+    mv tools/qt-faststart ${SRC}/bin/ && \
     make distclean && \
 	hash -r && \
 	cd /tmp && \
