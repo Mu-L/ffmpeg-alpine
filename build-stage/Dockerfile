@@ -91,7 +91,3 @@ RUN \
     LD_LIBRARY_PATH=/tmp/fakeroot/lib /tmp/fakeroot/bin/ffmpeg -buildconf
 
 RUN ls -la /tmp/fakeroot
-#copy /bin
-#copy /lib
-#copy /include
-#copy /share
