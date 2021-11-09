@@ -1,7 +1,7 @@
 #!/bin/sh
 cd dependencies
-docker build --rm -t yveshield/ffmpeg-alpine:4.2-dependencies .
-docker push yveshield/ffmpeg-alpine:4.2-dependencies
+docker build --rm -t yveshield/ffmpeg-alpine:4.4-dependencies .
+docker push yveshield/ffmpeg-alpine:4.4-dependencies
 cd ../build-stage
 docker build --rm -t yveshield/ffmpeg-alpine:4.2-buildstage .
 docker push yveshield/ffmpeg-alpine:4.2-buildstage

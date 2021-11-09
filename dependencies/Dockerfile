@@ -1,40 +1,42 @@
-FROM alpine:3.12 AS build
+FROM alpine:3.14 AS build
 
 WORKDIR /tmp/workdir
 
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j2"
-
-ENV FDKAAC_VERSION=0.1.5      \
-    LAME_VERSION=3.99.5       \
-    LIBASS_VERSION=0.13.7     \
+ENV HTTP_PROXY "http://docker.for.mac.host.internal:7890"
+ENV HTTPS_PROXY "http://docker.for.mac.host.internal:7890"
+ENV FDKAAC_VERSION=2.0.1      \
+    LAME_VERSION=3.100       \
+    LIBASS_VERSION=0.15.0     \
     OGG_VERSION=1.3.2         \
-    OPENCOREAMR_VERSION=0.1.5 \
-    OPUS_VERSION=1.2          \
-    OPENJPEG_VERSION=2.1.2    \
+    OPENCOREAMR_VERSION=0.1.2 \
+    OPUS_VERSION=1.3.1          \
+    OPENJPEG_VERSION=2.4.0    \
     THEORA_VERSION=1.1.1      \
-    VORBIS_VERSION=1.3.5      \
-    VPX_VERSION=1.7.0         \
-    X264_VERSION=20170226-2245-stable \
-    X265_VERSION=2.3          \
-    XVID_VERSION=1.3.4        \
-    FREETYPE_VERSION=2.5.5    \
-    FRIBIDI_VERSION=0.19.7    \
-    FONTCONFIG_VERSION=2.12.4 \
+    VORBIS_VERSION=1.3.7      \
+    VPX_VERSION=1.10.0         \
+    X264_VERSION=20210211 \
+    X265_VERSION=3.4          \
+    XVID_VERSION=1.3.7        \
+    FREETYPE_VERSION=2.10.4    \
+    FRIBIDI_VERSION=1.0.9    \
+    FONTCONFIG_VERSION=2.13.1 \
     LIBVIDSTAB_VERSION=1.1.0  \
     KVAZAAR_VERSION=1.2.0     \
     AOM_VERSION=v1.0.0        \
     SRC=/usr/local
 
+ARG ACC_SHA256SUM="840133aa9412153894af03b27b03dde1188772442c316a4ce2a24ed70093f271  fdk-aac-2.0.1.tar.gz"
 ARG OGG_SHA256SUM="e19ee34711d7af328cb26287f4137e70630e7261b17cbe3cd41011d73a654692  libogg-1.3.2.tar.gz"
-ARG OPUS_SHA256SUM="77db45a87b51578fbc49555ef1b10926179861d854eb2613207dc79d9ec0a9a9  opus-1.2.tar.gz"
-ARG VORBIS_SHA256SUM="6efbcecdd3e5dfbf090341b485da9d176eb250d893e3eb378c428a2db38301ce  libvorbis-1.3.5.tar.gz"
-ARG THEORA_SHA256SUM="40952956c47811928d1e7922cda3bc1f427eb75680c3c37249c91e949054916b  libtheora-1.1.1.tar.gz"
-ARG XVID_SHA256SUM="4e9fd62728885855bc5007fe1be58df42e5e274497591fec37249e1052ae316f  xvidcore-1.3.4.tar.gz"
-ARG FREETYPE_SHA256SUM="5d03dd76c2171a7601e9ce10551d52d4471cf92cd205948e60289251daddffa8  freetype-2.5.5.tar.gz"
+ARG OPUS_SHA256SUM="65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d  opus-1.3.1.tar.gz"
+ARG VORBIS_SHA256SUM="b33cc4934322bcbf6efcbacf49e3ca01aadbea4114ec9589d1b1e9d20f72954b  libvorbis-1.3.7.tar.xz"
+ARG THEORA_SHA256SUM="f36da409947aa2b3dcc6af0a8c2e3144bc19db2ed547d64e9171c59c66561c61  libtheora-1.1.1.tar.xz"
+ARG XVID_SHA256SUM="abbdcbd39555691dd1c9b4d08f0a031376a3b211652c0d8b3b8aa9be1303ce2d  xvidcore-1.3.7.tar.gz"
+ARG FREETYPE_SHA256SUM="86a854d8905b19698bbc8f23b860bc104246ce4854dcea8e3b0fb21284f75784  freetype-2.10.4.tar.xz"
 ARG LIBVIDSTAB_SHA256SUM="14d2a053e56edad4f397be0cb3ef8eb1ec3150404ce99a426c4eb641861dc0bb  v1.1.0.tar.gz"
-ARG LIBASS_SHA256SUM="8fadf294bf701300d4605e6f1d92929304187fca4b8d8a47889315526adbafd7  0.13.7.tar.gz"
-ARG FRIBIDI_SHA256SUM="3fc96fa9473bd31dcb5500bdf1aa78b337ba13eb8c301e7c28923fea982453a8  0.19.7.tar.gz"
+ARG LIBASS_SHA256SUM="9f09230c9a0aa68ef7aa6a9e2ab709ca957020f842e52c5b2e52b801a7d9e833  libass-0.15.0.tar.xz"
+ARG FRIBIDI_SHA256SUM="c5e47ea9026fb60da1944da9888b4e0a18854a0e2410bbfe7ad90a054d36e0c7  fribidi-1.0.9.tar.xz"
 
 
 RUN buildDeps="autoconf \
@@ -52,10 +54,16 @@ RUN buildDeps="autoconf \
     gcc \
     gperf \
     libtool \
+    libuuid \
+    util-linux \
     make \
-    python3 \
+    meson \
+    nasm \
+    ninja \
     openssl-dev \
+    python3 \
     tar \
+    xz \
     yasm \
     zlib-dev" && \
     apk  add --update ${buildDeps} libgcc libstdc++ ca-certificates libcrypto1.1 libssl1.1
@@ -65,7 +73,7 @@ RUN \
     DIR=/tmp/opencore-amr && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -skL https://kent.dl.sourceforge.net/project/opencore-amr/opencore-amr/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz | \
+    curl -skL https://kent.dl.sourceforge.net/project/opencore-amr/opencore-amr/${OPENCOREAMR_VERSION}/opencore-amr-${OPENCOREAMR_VERSION}.tar.gz | \
     tar -zx --strip-components=1 && \
     ./configure --prefix="${PREFIX}" --enable-shared  && \
     make && \
@@ -76,8 +84,8 @@ RUN \
     DIR=/tmp/x264 && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-${X264_VERSION}.tar.bz2 | \
-    tar -jx --strip-components=1 && \
+    curl -skL https://anduin.linuxfromscratch.org/BLFS/x264/x264-${X264_VERSION}.tar.xz | \
+    tar -Jvx --strip-components=1 && \
     ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
     make && \
     make install && \
@@ -87,7 +95,7 @@ RUN \
     DIR=/tmp/x265 && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://download.videolan.org/pub/videolan/x265/x265_${X265_VERSION}.tar.gz  | \
+    curl -sL http://anduin.linuxfromscratch.org/BLFS/x265/x265_${X265_VERSION}.tar.gz  | \
     tar -zx && \
     cd x265_${X265_VERSION}/build/linux && \
     sed -i "/-DEXTRA_LIB/ s/$/ -DCMAKE_INSTALL_PREFIX=\${PREFIX}/" multilib.sh && \
@@ -125,9 +133,9 @@ RUN \
     DIR=/tmp/vorbis && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO http://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VERSION}.tar.gz && \
+    curl -sLO http://downloads.xiph.org/releases/vorbis/libvorbis-${VORBIS_VERSION}.tar.xz && \
     echo ${VORBIS_SHA256SUM} | sha256sum --check && \
-    tar -zx --strip-components=1 -f libvorbis-${VORBIS_VERSION}.tar.gz && \
+    tar -Jx --strip-components=1 -f libvorbis-${VORBIS_VERSION}.tar.xz && \
     ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
     make && \
     make install && \
@@ -137,9 +145,9 @@ RUN \
     DIR=/tmp/theora && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO http://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.gz && \
+    curl -sLO https://downloads.xiph.org/releases/theora/libtheora-${THEORA_VERSION}.tar.xz && \
     echo ${THEORA_SHA256SUM} | sha256sum --check && \
-    tar -zx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.gz && \
+    tar -Jx --strip-components=1 -f libtheora-${THEORA_VERSION}.tar.xz && \
     ./configure --prefix="${PREFIX}" --with-ogg="${PREFIX}" --enable-shared && \
     make && \
     make install && \
@@ -149,7 +157,7 @@ RUN \
     DIR=/tmp/vpx && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://codeload.github.com/webmproject/libvpx/tar.gz/v${VPX_VERSION} | \
+    curl -sL https://github.com/webmproject/libvpx/archive/v${VPX_VERSION}/libvpx-${VPX_VERSION}.tar.gz | \
     tar -zx --strip-components=1 && \
     ./configure --prefix="${PREFIX}" --enable-vp8 --enable-vp9 --enable-pic --enable-shared \
     --disable-debug --disable-examples --disable-docs --disable-install-bins  && \
@@ -161,7 +169,7 @@ RUN \
     DIR=/tmp/lame && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -skL https://kent.dl.sourceforge.net/project/lame/lame/$(echo ${LAME_VERSION} | sed -e 's/[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)/\1.\2/')/lame-${LAME_VERSION}.tar.gz | \
+    curl -skL https://downloads.sourceforge.net/lame/lame-${LAME_VERSION}.tar.gz | \
     tar -zx --strip-components=1 && \
     ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --enable-pic --disable-frontend && \
     make && \
@@ -172,8 +180,7 @@ RUN \
     DIR=/tmp/xvid && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO http://downloads.xvid.org/downloads/xvidcore-${XVID_VERSION}.tar.gz && \
-    echo ${XVID_SHA256SUM} | sha256sum --check && \
+    curl -skLO https://downloads.xvid.com/downloads/xvidcore-${XVID_VERSION}.tar.gz && \
     tar -zx -f xvidcore-${XVID_VERSION}.tar.gz && \
     cd xvidcore/build/generic && \
     ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --datadir="${DIR}" --enable-shared --enable-shared && \
@@ -185,8 +192,9 @@ RUN \
     DIR=/tmp/fdk-aac && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://github.com/mstorsjo/fdk-aac/archive/v${FDKAAC_VERSION}.tar.gz | \
-    tar -zx --strip-components=1 && \
+    curl -skLO http://downloads.sourceforge.net/opencore-amr/fdk-aac-${FDKAAC_VERSION}.tar.gz && \
+    echo ${ACC_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f fdk-aac-${FDKAAC_VERSION}.tar.gz && \
     autoreconf -fiv && \
     ./configure --prefix="${PREFIX}" --enable-shared --datadir="${DIR}" && \
     make && \
@@ -197,8 +205,8 @@ RUN \
     DIR=/tmp/openjpeg && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}.tar.gz | \
-    tar -zx --strip-components=1 && \
+    curl -sLO https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}/openjpeg-${OPENJPEG_VERSION}.tar.gz && \
+    tar -zx --strip-components=1 -f openjpeg-${OPENJPEG_VERSION}.tar.gz && \
     cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
     make && \
     make install && \
@@ -208,9 +216,9 @@ RUN  \
     DIR=/tmp/freetype && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO http://download.savannah.gnu.org/releases/freetype/freetype-${FREETYPE_VERSION}.tar.gz && \
+    curl -skLO http://downloads.sourceforge.net/freetype/freetype-${FREETYPE_VERSION}.tar.xz && \
     echo ${FREETYPE_SHA256SUM} | sha256sum --check && \
-    tar -zx --strip-components=1 -f freetype-${FREETYPE_VERSION}.tar.gz && \
+    tar -Jx --strip-components=1 -f freetype-${FREETYPE_VERSION}.tar.xz && \
     ./configure --prefix="${PREFIX}" --disable-static --enable-shared && \
     make && \
     make install && \
@@ -233,14 +241,13 @@ RUN  \
     DIR=/tmp/fribidi && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO https://github.com/fribidi/fribidi/archive/${FRIBIDI_VERSION}.tar.gz && \
+    curl -sLO https://github.com/fribidi/fribidi/releases/download/v${FRIBIDI_VERSION}/fribidi-${FRIBIDI_VERSION}.tar.xz && \
     echo ${FRIBIDI_SHA256SUM} | sha256sum --check && \
-    tar -zx --strip-components=1 -f ${FRIBIDI_VERSION}.tar.gz && \
-    sed -i 's/^SUBDIRS =.*/SUBDIRS=gen.tab charset lib/' Makefile.am && \
-    ./bootstrap --no-config && \
-    ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
-    make -j 1 && \
-    make install && \
+    tar -Jx --strip-components=1 -f fribidi-${FRIBIDI_VERSION}.tar.xz && \
+    mkdir build && \
+    cd    build && \
+    meson --prefix="${PREFIX}" .. && \
+    ninja && \
     rm -rf ${DIR}
 ## fontconfig https://www.freedesktop.org/wiki/Software/fontconfig/
 RUN  \
@@ -258,9 +265,9 @@ RUN  \
     DIR=/tmp/libass && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO https://github.com/libass/libass/archive/${LIBASS_VERSION}.tar.gz &&\
+    curl -sLO https://github.com/libass/libass/releases/download/${LIBASS_VERSION}/libass-${LIBASS_VERSION}.tar.xz &&\
     echo ${LIBASS_SHA256SUM} | sha256sum --check && \
-    tar -zx --strip-components=1 -f ${LIBASS_VERSION}.tar.gz && \
+    tar -Jx --strip-components=1 -f libass-${LIBASS_VERSION}.tar.xz && \
     ./autogen.sh && \
     ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
     make && \
