@@ -157,7 +157,7 @@ RUN \
     DIR=/tmp/vpx && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://github.com/webmproject/libvpx/archive/v${VPX_VERSION}/libvpx-${VPX_VERSION}.tar.gz | \
+    curl -sL https://github.com/webmproject/libvpx/archive/refs/tags/v${VPX_VERSION}.tar.gz | \
     tar -zx --strip-components=1 && \
     ./configure --prefix="${PREFIX}" --enable-vp8 --enable-vp9 --enable-pic --enable-shared \
     --disable-debug --disable-examples --disable-docs --disable-install-bins  && \
