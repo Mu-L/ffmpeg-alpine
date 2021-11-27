@@ -54,8 +54,6 @@ RUN buildDeps="autoconf \
     gcc \
     gperf \
     libtool \
-    libuuid \
-    util-linux \
     make \
     meson \
     nasm \
@@ -205,9 +203,13 @@ RUN \
     DIR=/tmp/openjpeg && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sLO https://github.com/uclouvain/openjpeg/archive/v${OPENJPEG_VERSION}/openjpeg-${OPENJPEG_VERSION}.tar.gz && \
-    tar -zx --strip-components=1 -f openjpeg-${OPENJPEG_VERSION}.tar.gz && \
-    cmake -DBUILD_THIRDPARTY:BOOL=ON -DCMAKE_INSTALL_PREFIX="${PREFIX}" . && \
+    curl -sLO https://github.com/uclouvain/openjpeg/archive/refs/tags/v${OPENJPEG_VERSION}.tar.gz && \
+    tar -zx --strip-components=1 -f v${OPENJPEG_VERSION}.tar.gz && \
+    mkdir build && \
+    cd    build && \
+    cmake -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+          -DBUILD_STATIC_LIBS=OFF .. && \
     make && \
     make install && \
     rm -rf ${DIR}
@@ -256,7 +258,7 @@ RUN  \
     cd ${DIR} && \
     curl -sLO https://www.freedesktop.org/software/fontconfig/release/fontconfig-${FONTCONFIG_VERSION}.tar.bz2 &&\
     tar -jx --strip-components=1 -f fontconfig-${FONTCONFIG_VERSION}.tar.bz2 && \
-    ./configure -prefix="${PREFIX}" --disable-static --enable-shared && \
+    ./configure -prefix="${PREFIX}" --disable-static --disable-docs --enable-shared && \
     make && \
     make install && \
     rm -rf ${DIR}
