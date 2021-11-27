@@ -1,5 +1,5 @@
-FROM yveshield/ffmpeg-alpine:4.2-dependencies AS build-stage
-FROM alpine:3.12
+FROM yveshield/ffmpeg-alpine:4.4-dependencies AS build-stage
+FROM alpine:3.14
 WORKDIR /tmp/workdir
 
 ARG PKG_CONFIG_PATH=/usr/local/ffmpeg/pkgconfig
@@ -7,7 +7,7 @@ ARG LD_LIBRARY_PATH=/usr/local/ffmpeg
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j2"
 
-ENV FFMPEG_VERSION=4.2
+ENV FFMPEG_VERSION=4.4
 
 RUN buildDeps="autoconf \
     automake \

@@ -1,5 +1,5 @@
-FROM yveshield/ffmpeg-alpine:4.2-buildstage as build-stage
-FROM alpine:3.12
+FROM yveshield/ffmpeg-alpine:4.4-buildstage as build-stage
+FROM alpine:3.14
 
 COPY --from=build-stage /tmp/fakeroot/bin /usr/local/bin
 COPY --from=build-stage /tmp/fakeroot/share /usr/local/share

@@ -1,8 +1,8 @@
-FROM golang:1.15-alpine3.12
+FROM golang:1.15-alpine3.14
 
 LABEL maintainer="Yves. mail: yveshield@gmail.com"
 
-ENV FFMPEG_VERSION=4.2
+ENV FFMPEG_VERSION=4.4
 
 ENV FFMPEG_CORE="bash \
     tzdata \
