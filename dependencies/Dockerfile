@@ -4,8 +4,6 @@ WORKDIR /tmp/workdir
 
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j2"
-ENV HTTP_PROXY "http://docker.for.mac.host.internal:7890"
-ENV HTTPS_PROXY "http://docker.for.mac.host.internal:7890"
 ENV FDKAAC_VERSION=2.0.1      \
     LAME_VERSION=3.100       \
     LIBASS_VERSION=0.15.0     \
