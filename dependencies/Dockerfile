@@ -35,6 +35,7 @@ ARG FREETYPE_SHA256SUM="86a854d8905b19698bbc8f23b860bc104246ce4854dcea8e3b0fb212
 ARG LIBVIDSTAB_SHA256SUM="14d2a053e56edad4f397be0cb3ef8eb1ec3150404ce99a426c4eb641861dc0bb  v1.1.0.tar.gz"
 ARG LIBASS_SHA256SUM="9f09230c9a0aa68ef7aa6a9e2ab709ca957020f842e52c5b2e52b801a7d9e833  libass-0.15.0.tar.xz"
 ARG FRIBIDI_SHA256SUM="c5e47ea9026fb60da1944da9888b4e0a18854a0e2410bbfe7ad90a054d36e0c7  fribidi-1.0.9.tar.xz"
+ARG LAME_SHA256SUM="ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e  lame-3.100.tar.gz"
 
 
 RUN buildDeps="autoconf \
@@ -165,8 +166,9 @@ RUN \
     DIR=/tmp/lame && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -skL https://downloads.sourceforge.net/lame/lame-${LAME_VERSION}.tar.gz | \
-    tar -zx --strip-components=1 && \
+    curl -skLO https://downloads.sourceforge.net/lame/lame-${LAME_VERSION}.tar.gz && \
+    echo ${LAME_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f lame-${LAME_VERSION}.tar.gz && \
     ./configure --prefix="${PREFIX}" --bindir="${PREFIX}/bin" --enable-shared --enable-nasm --enable-pic --disable-frontend && \
     make && \
     make install && \
