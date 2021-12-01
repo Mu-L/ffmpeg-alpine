@@ -36,6 +36,7 @@ ARG LIBVIDSTAB_SHA256SUM="14d2a053e56edad4f397be0cb3ef8eb1ec3150404ce99a426c4eb6
 ARG LIBASS_SHA256SUM="9f09230c9a0aa68ef7aa6a9e2ab709ca957020f842e52c5b2e52b801a7d9e833  libass-0.15.0.tar.xz"
 ARG FRIBIDI_SHA256SUM="c5e47ea9026fb60da1944da9888b4e0a18854a0e2410bbfe7ad90a054d36e0c7  fribidi-1.0.9.tar.xz"
 ARG LAME_SHA256SUM="ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e  lame-3.100.tar.gz"
+ARG VPX_SHA256SUM="85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a  v1.10.0.tar.gz"
 
 
 RUN buildDeps="autoconf \
@@ -154,8 +155,9 @@ RUN \
     DIR=/tmp/vpx && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -sL https://github.com/webmproject/libvpx/archive/refs/tags/v${VPX_VERSION}.tar.gz | \
-    tar -zx --strip-components=1 && \
+    curl -sL https://github.com/webmproject/libvpx/archive/refs/tags/v${VPX_VERSION}.tar.gz \
+    echo ${VPX_SHA256SUM} | sha256sum --check && \
+    tar -zx --strip-components=1 -f v${VPX_VERSION}.tar.gz && \
     ./configure --prefix="${PREFIX}" --enable-vp8 --enable-vp9 --enable-pic --enable-shared \
     --disable-debug --disable-examples --disable-docs --disable-install-bins  && \
     make && \
