@@ -37,6 +37,7 @@ ARG LIBASS_SHA256SUM="9f09230c9a0aa68ef7aa6a9e2ab709ca957020f842e52c5b2e52b801a7
 ARG FRIBIDI_SHA256SUM="c5e47ea9026fb60da1944da9888b4e0a18854a0e2410bbfe7ad90a054d36e0c7  fribidi-1.0.9.tar.xz"
 ARG LAME_SHA256SUM="ddfe36cab873794038ae2c1210557ad34857a4b6bdc515785d1da9e175b1da1e  lame-3.100.tar.gz"
 ARG VPX_SHA256SUM="85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a  v1.10.0.tar.gz"
+ARG X264_SHA256SUM="519157f61c2a8df585921b9582682d64ce9961b5cd368b709fc7bf22c1cbc617  x264-20210211.tar.xz"
 
 
 RUN buildDeps="autoconf \
@@ -82,8 +83,9 @@ RUN \
     DIR=/tmp/x264 && \
     mkdir -p ${DIR} && \
     cd ${DIR} && \
-    curl -skL https://anduin.linuxfromscratch.org/BLFS/x264/x264-${X264_VERSION}.tar.xz | \
-    tar -Jvx --strip-components=1 && \
+    curl -skL https://anduin.linuxfromscratch.org/BLFS/x264/x264-${X264_VERSION}.tar.xz && \
+    echo ${X264_SHA256SUM} | sha256sum --check && \
+    tar -Jvx --strip-components=1 -f x264-${X264_VERSION}.tar.xz && \
     ./configure --prefix="${PREFIX}" --enable-shared --enable-pic --disable-cli && \
     make && \
     make install && \
